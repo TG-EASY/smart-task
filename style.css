@@ -1,0 +1,693 @@
+:root {
+    /* Color Palette */
+    --bg-dark: #0f1115;
+    --bg-gradient: linear-gradient(135deg, #161922 0%, #0a0b0e 100%);
+    --gold-primary: #f5c518;
+    --gold-gradient: linear-gradient(135deg, #fcebb6 0%, #f5c518 100%);
+    --gold-hover: linear-gradient(135deg, #fdf4d8 0%, #f6d34b 100%);
+    
+    /* Text Colors */
+    --text-primary: #ffffff;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    
+    /* Glassmorphism */
+    --glass-bg: rgba(10, 12, 16, 0.75);
+    --glass-border: rgba(255, 255, 255, 0.15);
+    --glass-shadow: 0 16px 40px 0 rgba(0, 0, 0, 0.6);
+    
+    /* Spacing & Radii */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
+    --spacing-xs: 4px;
+    --spacing-sm: 8px;
+    --spacing-md: 16px;
+    --spacing-lg: 24px;
+    --spacing-xl: 32px;
+    
+    /* Transitions */
+    --transition-fast: 0.2s ease;
+    --transition-normal: 0.3s ease;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: url('assets/background2.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    padding: var(--spacing-xl) var(--spacing-md);
+    overflow-x: hidden;
+}
+
+/* Background Effects for Modern SaaS Look */
+body::before {
+    content: '';
+    position: absolute;
+    top: -20%;
+    left: -10%;
+    width: 50%;
+    height: 50%;
+    background: radial-gradient(circle, rgba(245, 197, 24, 0.08) 0%, rgba(0,0,0,0) 70%);
+    z-index: -1;
+    border-radius: 50%;
+}
+
+body::after {
+    content: '';
+    position: absolute;
+    bottom: -10%;
+    right: -10%;
+    width: 40%;
+    height: 40%;
+    background: radial-gradient(circle, rgba(100, 116, 139, 0.1) 0%, rgba(0,0,0,0) 70%);
+    z-index: -1;
+    border-radius: 50%;
+}
+
+/* Built By Badge */
+.built-by-badge {
+    position: absolute;
+    top: var(--spacing-md);
+    right: var(--spacing-md);
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    box-shadow: var(--glass-shadow);
+    z-index: 100;
+}
+
+.app-container {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    position: relative;
+}
+
+/* Glass Card Utility */
+.glass-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-lg);
+    box-shadow: var(--glass-shadow);
+    margin-bottom: var(--spacing-xl);
+}
+
+.glass-card-subtle {
+    background: rgba(10, 12, 16, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-xl);
+}
+
+/* Top Section */
+.top-section {
+    text-align: center;
+    margin-bottom: var(--spacing-xl);
+    padding-top: var(--spacing-xl);
+}
+
+.badge {
+    display: inline-block;
+    background: rgba(245, 197, 24, 0.1);
+    color: var(--gold-primary);
+    border: 1px solid rgba(245, 197, 24, 0.2);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: var(--spacing-md);
+}
+
+.badge i {
+    margin-right: 4px;
+}
+
+.main-title {
+    font-size: 3rem;
+    font-weight: 700;
+    letter-spacing: -1px;
+    margin-bottom: var(--spacing-sm);
+    color: #ffffff;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+}
+
+.description-text {
+    color: #f1f5f9;
+    font-size: 1.1rem;
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.5;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);
+}
+
+/* Floating Card */
+.floating-card {
+    position: absolute;
+    top: 50px;
+    right: -280px;
+    width: 250px;
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-md);
+    box-shadow: var(--glass-shadow);
+    transform: rotate(3deg);
+    transition: var(--transition-normal);
+}
+
+.floating-card:hover {
+    transform: rotate(0deg) translateY(-5px);
+}
+
+.icon-bulb {
+    color: var(--gold-primary);
+    font-size: 1.5rem;
+    margin-bottom: var(--spacing-sm);
+}
+
+.floating-card p {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    line-height: 1.4;
+}
+
+/* Input Section */
+#task-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.input-group input {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-md);
+    padding: 16px 20px;
+    color: var(--text-primary);
+    font-size: 1.1rem;
+    font-family: inherit;
+    outline: none;
+    transition: var(--transition-normal);
+}
+
+.input-group input:focus {
+    border-color: rgba(245, 197, 24, 0.5);
+    box-shadow: 0 0 0 4px rgba(245, 197, 24, 0.1);
+}
+
+.input-group input::placeholder {
+    color: var(--text-muted);
+}
+
+.controls-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.reminder-dropdown {
+    display: flex;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-md);
+    padding: 0 16px;
+    height: 48px;
+    transition: var(--transition-fast);
+}
+
+.reminder-dropdown:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.reminder-dropdown i {
+    color: var(--text-secondary);
+    margin-right: 8px;
+}
+
+.reminder-dropdown select {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-family: inherit;
+    font-size: 0.95rem;
+    outline: none;
+    cursor: pointer;
+    appearance: none;
+    padding-right: 16px;
+}
+
+.reminder-dropdown select option {
+    background: var(--bg-dark);
+    color: var(--text-primary);
+}
+
+.gradient-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--gold-gradient);
+    color: #1a1a1a;
+    border: none;
+    border-radius: var(--radius-md);
+    padding: 0 24px;
+    height: 48px;
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: var(--transition-fast);
+    box-shadow: 0 4px 15px rgba(245, 197, 24, 0.3);
+}
+
+.gradient-btn:hover {
+    background: var(--gold-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(245, 197, 24, 0.4);
+}
+
+.gradient-btn:active {
+    transform: translateY(0);
+}
+
+/* Examples Section */
+.examples-section {
+    margin-top: var(--spacing-lg);
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-md);
+}
+
+.examples-label {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-top: 6px;
+}
+
+.example-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.chip {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-border);
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    padding: 6px 12px;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.chip:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Offline Message */
+.offline-message {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.offline-message i {
+    color: var(--text-muted);
+}
+
+.offline-message p {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+/* Tasks Section */
+.tasks-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-md);
+    border-bottom: 1px solid var(--glass-border);
+    padding-bottom: var(--spacing-md);
+}
+
+.section-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.counter {
+    color: var(--text-muted);
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.task-filters {
+    display: flex;
+    gap: 8px;
+}
+
+.filter-btn {
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--text-secondary);
+    padding: 6px 12px;
+    border-radius: var(--radius-sm);
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.filter-btn:hover {
+    color: var(--text-primary);
+}
+
+.filter-btn.active {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--glass-border);
+    color: var(--text-primary);
+}
+
+/* Task List Container */
+.task-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    min-height: 200px;
+}
+
+/* Empty State */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-xl) 0;
+    text-align: center;
+    opacity: 0.5;
+}
+
+.empty-icon {
+    font-size: 3rem;
+    margin-bottom: var(--spacing-md);
+    color: var(--text-muted);
+}
+
+.empty-state h3 {
+    font-size: 1.2rem;
+    margin-bottom: 8px;
+    color: var(--text-primary);
+}
+
+.empty-state p {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+/* Task Card */
+.task-card {
+    background: rgba(15, 18, 25, 0.75);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.task-card::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: var(--gold-gradient);
+    opacity: 0;
+    transition: var(--transition-fast);
+}
+
+.task-card:hover {
+    background: rgba(30, 41, 59, 0.7);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.task-card:hover::before {
+    opacity: 1;
+}
+
+/* Animations */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideOut {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(50px);
+    }
+}
+
+.task-card.adding {
+    animation: slideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.task-card.removing {
+    animation: slideOut 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.task-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.task-title {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    transition: var(--transition-fast);
+}
+
+.task-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    background: rgba(0, 0, 0, 0.2);
+    padding: 2px 8px;
+    border-radius: 12px;
+}
+
+.meta-item i {
+    color: var(--gold-primary);
+    font-size: 0.75rem;
+}
+
+.task-actions {
+    display: flex;
+    gap: 8px;
+    margin-left: var(--spacing-md);
+}
+
+.action-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid var(--glass-border);
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.btn-complete:hover {
+    background: rgba(34, 197, 94, 0.1);
+    color: #22c55e;
+    border-color: rgba(34, 197, 94, 0.3);
+}
+
+.btn-delete:hover {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    border-color: rgba(239, 68, 68, 0.3);
+}
+
+/* Completed State */
+.task-card.completed {
+    background: rgba(30, 41, 59, 0.2);
+    border-color: rgba(255, 255, 255, 0.02);
+}
+
+.task-card.completed::before {
+    background: #22c55e;
+}
+
+.task-card.completed .task-title {
+    color: var(--text-muted);
+    text-decoration: line-through;
+}
+
+.task-card.completed .meta-item {
+    opacity: 0.6;
+}
+
+.task-card.completed .btn-complete {
+    background: #22c55e;
+    color: #fff;
+    border-color: #22c55e;
+}
+
+/* Footer */
+.app-footer {
+    margin-top: auto;
+    padding-top: var(--spacing-xl);
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .floating-card {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .main-title {
+        font-size: 2.2rem;
+    }
+    
+    .controls-group {
+        flex-direction: column;
+    }
+    
+    .reminder-dropdown, .gradient-btn {
+        width: 100%;
+    }
+    
+    .reminder-dropdown select {
+        width: 100%;
+    }
+    
+    .gradient-btn {
+        justify-content: center;
+    }
+    
+    .examples-section {
+        flex-direction: column;
+    }
+    
+    .task-filters {
+        flex-wrap: wrap;
+        justify-content: flex-end;
+    }
+    
+    .built-by-badge {
+        position: relative;
+        top: 0;
+        right: 0;
+        margin-bottom: var(--spacing-md);
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        padding: var(--spacing-md) var(--spacing-sm);
+    }
+    
+    .tasks-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-md);
+    }
+    
+    .task-filters {
+        width: 100%;
+        justify-content: flex-start;
+    }
+    
+    .task-card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-md);
+    }
+    
+    .task-actions {
+        margin-left: 0;
+        width: 100%;
+        justify-content: flex-end;
+        border-top: 1px solid var(--glass-border);
+        padding-top: var(--spacing-md);
+    }
+}
