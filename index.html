@@ -73,6 +73,7 @@
                     <button class="filter-btn active" data-filter="all">All</button>
                     <button class="filter-btn" data-filter="today">Today</button>
                     <button class="filter-btn" data-filter="completed">Completed</button>
+                    <button id="open-report-btn" class="report-trigger-btn"><i class="fa-solid fa-file-export"></i> Export Report</button>
                 </div>
             </div>
 
@@ -94,6 +95,59 @@
     <footer class="app-footer">
         <p>Built by ThankGod Oghenekparode &copy; <span id="current-year"></span></p>
     </footer>
+
+    <!-- Report Modal -->
+    <div id="report-modal" class="modal-overlay">
+        <div class="modal-content glass-card">
+            <div class="modal-header">
+                <h2><i class="fa-solid fa-file-export"></i> Generate Task Report</h2>
+                <button id="close-report-modal" class="close-btn">&times;</button>
+            </div>
+            
+            <div class="modal-body">
+                <div class="report-settings">
+                    <h3>Report Settings</h3>
+                    <div class="form-group">
+                        <label for="report-filter">Filter Tasks:</label>
+                        <select id="report-filter" class="modal-select">
+                            <option value="all">All Tasks</option>
+                            <option value="pending">Pending Tasks Only</option>
+                            <option value="completed">Completed Tasks Only</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="export-options">
+                    <h3>Choose Export Format</h3>
+                    <div class="export-grid">
+                        <button id="export-pdf-btn" class="export-card-btn">
+                            <div class="export-icon pdf-color"><i class="fa-solid fa-file-pdf"></i></div>
+                            <div class="export-info">
+                                <h4>PDF Document</h4>
+                                <p>Print or save as structured PDF report</p>
+                            </div>
+                        </button>
+                        
+                        <button id="export-doc-btn" class="export-card-btn">
+                            <div class="export-icon word-color"><i class="fa-solid fa-file-word"></i></div>
+                            <div class="export-info">
+                                <h4>Word Document</h4>
+                                <p>Download as an editable .doc file</p>
+                            </div>
+                        </button>
+                        
+                        <button id="export-csv-btn" class="export-card-btn">
+                            <div class="export-icon csv-color"><i class="fa-solid fa-file-csv"></i></div>
+                            <div class="export-info">
+                                <h4>Spreadsheet</h4>
+                                <p>Download as a CSV spreadsheet for Excel</p>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="script.js"></script>
 </body>

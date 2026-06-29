@@ -368,6 +368,462 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // --- Report Modal & Export Logic ---
+    const reportModal = document.getElementById('report-modal');
+    const openReportBtn = document.getElementById('open-report-btn');
+    const closeReportModal = document.getElementById('close-report-modal');
+    const reportFilterSelect = document.getElementById('report-filter');
+    const exportPdfBtn = document.getElementById('export-pdf-btn');
+    const exportDocBtn = document.getElementById('export-doc-btn');
+    const exportCsvBtn = document.getElementById('export-csv-btn');
+
+    function openModal() {
+        reportModal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+        reportModal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    function getFilteredReportTasks() {
+        const filterVal = reportFilterSelect.value;
+        if (filterVal === 'completed') {
+            return tasks.filter(t => t.completed);
+        } else if (filterVal === 'pending') {
+            return tasks.filter(t => !t.completed);
+        }
+        return tasks;
+    }
+
+    function exportToCSV() {
+        const reportTasks = getFilteredReportTasks();
+        if (reportTasks.length === 0) {
+            alert("No tasks found matching your filter!");
+            return;
+        }
+
+        const headers = ['Task Title', 'Status', 'Due Date', 'Due Time', 'Recurring', 'Reminder', 'Created At'];
+        const csvRows = [headers.join(',')];
+
+        reportTasks.forEach(task => {
+            const status = task.completed ? 'Completed' : 'Pending';
+            const reminderText = task.reminder ? `${task.reminder.replace('m', ' min').replace('h', ' hour').replace('d', ' day')} before` : 'None';
+            const rowValues = [
+                task.title || '',
+                status,
+                task.date || 'None',
+                task.time || 'None',
+                task.recurring || 'None',
+                reminderText,
+                task.createdAt ? new Date(task.createdAt).toLocaleString() : 'None'
+            ];
+            
+            const escapedRow = rowValues.map(val => `"${val.replace(/"/g, '""')}"`).join(',');
+            csvRows.push(escapedRow);
+        });
+
+        const csvContent = "\ufeff" + csvRows.join('\n');
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.setAttribute("href", url);
+        link.setAttribute("download", `smart_tasks_report_${reportFilterSelect.value}_${new Date().toISOString().slice(0, 10)}.csv`);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    function exportToWord() {
+        const reportTasks = getFilteredReportTasks();
+        if (reportTasks.length === 0) {
+            alert("No tasks found matching your filter!");
+            return;
+        }
+
+        const total = reportTasks.length;
+        const completed = reportTasks.filter(t => t.completed).length;
+        const pending = total - completed;
+        const compRate = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+        let tableRowsHtml = '';
+        reportTasks.forEach((task, idx) => {
+            const status = task.completed ? 'COMPLETED' : 'PENDING';
+            const statusColor = task.completed ? '#10b981' : '#f5c518';
+            tableRowsHtml += `
+                <tr style="border-bottom: 1px solid #e2e8f0;">
+                    <td style="padding: 10px; font-weight: bold; width: 40px; text-align: center;">${idx + 1}</td>
+                    <td style="padding: 10px; font-weight: 500;">${escapeHTML(task.title)}</td>
+                    <td style="padding: 10px; color: ${statusColor}; font-weight: bold; text-align: center;">${status}</td>
+                    <td style="padding: 10px; text-align: center;">${task.date || '-'}</td>
+                    <td style="padding: 10px; text-align: center;">${task.time || '-'}</td>
+                    <td style="padding: 10px; text-align: center;">${task.recurring || '-'}</td>
+                </tr>
+            `;
+        });
+
+        const wordHtml = `
+        <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+        <head>
+            <title>Task Report - Smart Task Manager</title>
+            <style>
+                body { font-family: 'Segoe UI', Arial, sans-serif; color: #1e293b; padding: 20px; line-height: 1.5; }
+                h1 { color: #0f172a; border-bottom: 2px solid #f5c518; padding-bottom: 10px; font-size: 24pt; margin-bottom: 5px; }
+                .meta { color: #64748b; font-size: 10pt; margin-bottom: 20px; }
+                .stats-container { background-color: #f8fafc; border: 1px solid #e2e8f0; padding: 15px; border-radius: 8px; margin-bottom: 25px; }
+                .stats-table { width: 100%; border-collapse: collapse; }
+                .stats-table td { padding: 5px 15px; font-size: 11pt; }
+                .tasks-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+                .tasks-header { background-color: #0f172a; color: #ffffff; font-weight: bold; }
+                .tasks-header th { padding: 12px 10px; font-size: 11pt; border: 1px solid #0f172a; text-align: center; }
+                .tasks-table td { border: 1px solid #e2e8f0; font-size: 10.5pt; }
+                .footer { margin-top: 40px; text-align: center; font-size: 9pt; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 15px; }
+            </style>
+        </head>
+        <body>
+            <h1>Smart Task Manager | Productivity Report</h1>
+            <div class="meta">Report Generated on: ${new Date().toLocaleString()} | Filter: ${capitalize(reportFilterSelect.value)} Tasks</div>
+            
+            <div class="stats-container">
+                <h3 style="margin-top: 0; color: #0f172a; font-size: 13pt;">Report Summary</h3>
+                <table class="stats-table">
+                    <tr>
+                        <td><strong>Total Tasks in Report:</strong> ${total}</td>
+                        <td><strong>Completed Tasks:</strong> ${completed}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Pending Tasks:</strong> ${pending}</td>
+                        <td><strong>Completion Rate:</strong> ${compRate}%</td>
+                    </tr>
+                </table>
+            </div>
+
+            <h3 style="color: #0f172a; border-bottom: 1px solid #e2e8f0; padding-bottom: 5px;">Task Details</h3>
+            <table class="tasks-table">
+                <thead>
+                    <tr class="tasks-header">
+                        <th style="width: 40px;">#</th>
+                        <th>Task Title</th>
+                        <th style="width: 120px;">Status</th>
+                        <th style="width: 120px;">Due Date</th>
+                        <th style="width: 100px;">Time</th>
+                        <th style="width: 120px;">Recurring</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${tableRowsHtml}
+                </tbody>
+            </table>
+
+            <div class="footer">
+                <p>Generated by Smart Task Manager - AI-Powered Productivity</p>
+            </div>
+        </body>
+        </html>
+        `;
+
+        const blob = new Blob(['\ufeff' + wordHtml], { type: 'application/msword;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.setAttribute("href", url);
+        link.setAttribute("download", `smart_tasks_report_${reportFilterSelect.value}_${new Date().toISOString().slice(0, 10)}.doc`);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    function exportToPDF() {
+        const reportTasks = getFilteredReportTasks();
+        if (reportTasks.length === 0) {
+            alert("No tasks found matching your filter!");
+            return;
+        }
+
+        const total = reportTasks.length;
+        const completed = reportTasks.filter(t => t.completed).length;
+        const pending = total - completed;
+        const compRate = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+        let tableRowsHtml = '';
+        reportTasks.forEach((task, idx) => {
+            const status = task.completed ? 'Completed' : 'Pending';
+            const statusClass = task.completed ? 'status-completed' : 'status-pending';
+            const reminderText = task.reminder ? `${task.reminder.replace('m', 'm').replace('h', 'h').replace('d', 'd')} before` : '';
+            
+            let metaString = '';
+            if (task.date) metaString += `Date: ${task.date} &nbsp;&nbsp;`;
+            if (task.time) metaString += `Time: ${task.time} &nbsp;&nbsp;`;
+            if (task.recurring) metaString += `Recurring: ${task.recurring} &nbsp;&nbsp;`;
+            if (task.reminder) metaString += `Reminder: ${reminderText}`;
+
+            tableRowsHtml += `
+                <tr>
+                    <td style="text-align: center; font-weight: bold; width: 30px;">${idx + 1}</td>
+                    <td>
+                        <div class="task-title">${escapeHTML(task.title)}</div>
+                        ${metaString ? `<div class="task-meta">${metaString}</div>` : ''}
+                    </td>
+                    <td style="width: 100px; text-align: center;">
+                        <span class="status-badge ${statusClass}">${status}</span>
+                    </td>
+                </tr>
+            `;
+        });
+
+        const printWindow = window.open('', '_blank', 'width=900,height=700');
+        if (!printWindow) {
+            alert("Popup blocked! Please allow popups to generate PDF report.");
+            return;
+        }
+
+        printWindow.document.write(`
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Task Report - Smart Task Manager</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            color: #1e293b;
+            line-height: 1.5;
+            padding: 40px;
+            background: #ffffff;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #f5c518;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .title h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+        .title p {
+            font-size: 12px;
+            color: #64748b;
+            margin-top: 5px;
+        }
+        .brand {
+            text-align: right;
+        }
+        .brand-name {
+            font-weight: 700;
+            font-size: 16px;
+            color: #0f172a;
+        }
+        .brand-sub {
+            font-size: 12px;
+            color: #64748b;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 35px;
+        }
+        .stat-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 16px;
+            background: #f8fafc;
+            text-align: center;
+        }
+        .stat-val {
+            font-size: 22px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 4px;
+        }
+        .stat-lbl {
+            font-size: 12px;
+            color: #64748b;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        h2.section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #0f172a;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 8px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 40px;
+        }
+        th {
+            background: #0f172a;
+            color: #ffffff;
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 12px 16px;
+            text-align: left;
+        }
+        td {
+            padding: 14px 16px;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 13px;
+            vertical-align: middle;
+        }
+        tr:nth-child(even) td {
+            background: #fafafa;
+        }
+        .task-title {
+            font-weight: 600;
+            color: #1e293b;
+        }
+        .task-meta {
+            font-size: 11px;
+            color: #64748b;
+            margin-top: 4px;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            text-align: center;
+        }
+        .status-completed {
+            background: #dcfce7;
+            color: #15803d;
+        }
+        .status-pending {
+            background: #fef9c3;
+            color: #a16207;
+        }
+        
+        .footer {
+            margin-top: auto;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: #94a3b8;
+        }
+        
+        @media print {
+            body { padding: 0; }
+            .stat-card { background: #f8fafc !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .status-completed { background: #dcfce7 !important; color: #15803d !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .status-pending { background: #fef9c3 !important; color: #a16207 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            th { background: #0f172a !important; color: #ffffff !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            tr:nth-child(even) td { background: #fafafa !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .header { border-bottom-color: #f5c518 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="title">
+            <h1>Smart Task Manager</h1>
+            <p>Productivity &amp; Task Report</p>
+        </div>
+        <div class="brand">
+            <div class="brand-name">Offline Task Report</div>
+            <div class="brand-sub">Generated: \${new Date().toLocaleString()}</div>
+        </div>
+    </div>
+    
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-val">\${total}</div>
+            <div class="stat-lbl">Total Tasks</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-val">\${completed}</div>
+            <div class="stat-lbl">Completed</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-val">\${pending}</div>
+            <div class="stat-lbl">Pending</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-val">\${compRate}%</div>
+            <div class="stat-lbl">Completion Rate</div>
+        </div>
+    </div>
+    
+    <h2 class="section-title">Tasks List (\${capitalize(reportFilterSelect.value)})</h2>
+    <table>
+        <thead>
+            <tr>
+                <th style="text-align: center; width: 30px;">#</th>
+                <th>Task Details</th>
+                <th style="text-align: center; width: 100px;">Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            \${tableRowsHtml}
+        </tbody>
+    </table>
+    
+    <div class="footer">
+        <div>Smart Task Manager &copy; \${new Date().getFullYear()}</div>
+        <div>Scope: \${capitalize(reportFilterSelect.value)} Tasks</div>
+    </div>
+    
+    <script>
+        window.onload = function() {
+            setTimeout(function() {
+                window.print();
+                window.close();
+            }, 500);
+        };
+    </script>
+</body>
+</html>
+        `);
+        printWindow.document.close();
+    }
+
+    // Modal triggers
+    openReportBtn.addEventListener('click', openModal);
+    closeReportModal.addEventListener('click', closeModal);
+    
+    // Close modal when clicking outside content
+    reportModal.addEventListener('click', (e) => {
+        if (e.target === reportModal) {
+            closeModal();
+        }
+    });
+
+    // Export buttons action
+    exportCsvBtn.addEventListener('click', () => {
+        exportToCSV();
+        closeModal();
+    });
+    
+    exportDocBtn.addEventListener('click', () => {
+        exportToWord();
+        closeModal();
+    });
+    
+    exportPdfBtn.addEventListener('click', () => {
+        exportToPDF();
+        closeModal();
+    });
+
     // Initial Render
     updateCounter();
     renderTasks();
