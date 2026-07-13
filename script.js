@@ -741,30 +741,30 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
         <div class="brand">
             <div class="brand-name">Offline Task Report</div>
-            <div class="brand-sub">Generated: \${new Date().toLocaleString()}</div>
+            <div class="brand-sub">Generated: ${new Date().toLocaleString()}</div>
         </div>
     </div>
     
     <div class="stats-grid">
         <div class="stat-card">
-            <div class="stat-val">\${total}</div>
+            <div class="stat-val">${total}</div>
             <div class="stat-lbl">Total Tasks</div>
         </div>
         <div class="stat-card">
-            <div class="stat-val">\${completed}</div>
+            <div class="stat-val">${completed}</div>
             <div class="stat-lbl">Completed</div>
         </div>
         <div class="stat-card">
-            <div class="stat-val">\${pending}</div>
+            <div class="stat-val">${pending}</div>
             <div class="stat-lbl">Pending</div>
         </div>
         <div class="stat-card">
-            <div class="stat-val">\${compRate}%</div>
+            <div class="stat-val">${compRate}%</div>
             <div class="stat-lbl">Completion Rate</div>
         </div>
     </div>
     
-    <h2 class="section-title">Tasks List (\${capitalize(reportFilterSelect.value)})</h2>
+    <h2 class="section-title">Tasks List (${capitalize(reportFilterSelect.value)})</h2>
     <table>
         <thead>
             <tr>
@@ -774,13 +774,13 @@ document.addEventListener('DOMContentLoaded', () => {
             </tr>
         </thead>
         <tbody>
-            \${tableRowsHtml}
+            ${tableRowsHtml}
         </tbody>
     </table>
     
     <div class="footer">
-        <div>Smart Task Manager &copy; \${new Date().getFullYear()}</div>
-        <div>Scope: \${capitalize(reportFilterSelect.value)} Tasks</div>
+        <div>Smart Task Manager &copy; ${new Date().getFullYear()}</div>
+        <div>Scope: ${capitalize(reportFilterSelect.value)} Tasks</div>
     </div>
     
     <script>
